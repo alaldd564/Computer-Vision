@@ -1,7 +1,7 @@
 import cv2 as cv  # OpenCV 라이브러리 임포트
 import numpy as np  # NumPy 라이브러리 임포트
 
-# 이미지 파일을 읽어옴 (파일명: 'soccer.jpg')
+# 이미지 파일을 읽어옴
 img = cv.imread(r'c:/computervision/chapter01_OpenCV/soccer.jpg')# 이미지를 BGR 형식으로 읽어옴
 # 이미지가 정상적으로 읽혔는지 확인
 if img is None:

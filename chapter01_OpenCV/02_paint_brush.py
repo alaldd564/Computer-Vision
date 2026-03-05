@@ -3,7 +3,7 @@ import numpy as np  # NumPy 라이브러리 임포트
 
 # 이미지 가져오기
 img = cv.imread(r'c:/computervision/chapter01_OpenCV/soccer.jpg')
-# 이미지 크기 고정 
+# 이미지 크기 고정 (없이 실행하면 너무 크게 출력해져서 변환된 사진이 짤림)
 max_width = 400  # 최대 가로 크기
 max_height = 400  # 최대 세로 크기
 h, w = img.shape[:2]  # 원본 이미지의 세로, 가로 크기 추출
