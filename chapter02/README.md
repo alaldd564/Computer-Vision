@@ -280,7 +280,12 @@ depth_map[valid_mask] = f * B / disparity[valid_mask]
 ---
 
 ## 결과물
+Painting: disparity=19.06, depth=4.42
+Frog: disparity=33.60, depth=2.51
+Teddy: disparity=22.42, depth=3.89
 
+가장 가까운 ROI: Frog
+가장 먼 ROI: Painting
 <div style="display: flex; flex-direction: row; gap: 20px;">
   <div style="text-align: center;">
 	<b>03. Depth 결과</b><br>
