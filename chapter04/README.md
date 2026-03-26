@@ -175,6 +175,7 @@ print(f"  nfeatures=500: {len(keypoints_500)} 개 (원래 대비 {len(keypoints_
 # nfeatures=200의 특징점 개수와 기본 방식 대비 비율 출력
 print(f"  nfeatures=200: {len(keypoints_200)} 개 (원래 대비 {len(keypoints_200)/len(keypoints_default)*100:.1f}%)")
 ```
+</details>
 
 **핵심 코드**
 ```python
