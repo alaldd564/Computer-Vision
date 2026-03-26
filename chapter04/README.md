@@ -11,8 +11,9 @@
 **핵심 개념 및 자세한 설명**
 - **SIFT(Sacle-Invariant Feature Transform)**: 이미지의 크기, 회전에 강인한 특징점 검출 알고리즘
 - **nfeatures**: 검출할 최대 특징점 개수 지정
-- **cv2.drawKeypoints**: 특징점의 위치, 크기, 방향을 이미지에 시각화
-- **matplotlib**: 결과 이미지 시각화 및 저장
+- **cv2.drawKeypoints**: 컬러 이미지에 특징점의 위치, 크기, 방향을 시각화
+- **matplotlib**: 원본 이미지와 특징점 이미지를 나란히 표시하여 결과 비교
+- **DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS**: 특징점의 방향(각도)과 크기를 명확하게 표시하는 플래그
 
 <details>
 <summary><b>전체 코드 (주석 포함)</b></summary>
@@ -64,7 +65,7 @@ print(f"nfeatures=200 - 특징점 개수: {len(keypoints_200)}")
 
 # 1. 기본 SIFT 결과를 이미지에 그리기
 img_keypoints_default = cv2.drawKeypoints(
-    img_gray,  # 그리기를 할 입력 그레이스케일 이미지
+    img_path,  # 그리기를 할 입력 컬러 이미지
     keypoints_default,  # 그릴 특징점 리스트
     None,  # 출력 이미지 (None으로 설정하면 새로 생성)
     flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS  # 특징점의 방향과 크기를 표시하는 플래그
@@ -72,7 +73,7 @@ img_keypoints_default = cv2.drawKeypoints(
 
 # 2. nfeatures=500 결과를 이미지에 그리기
 img_keypoints_500 = cv2.drawKeypoints(
-    img_gray,  # 입력 그레이스케일 이미지
+    img_path,  # 입력 컬러 이미지
     keypoints_500,  # 특징점 리스트 (500개 제한)
     None,  # 출력 이미지
     flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS  # 특징점 시각화 옵션
@@ -80,7 +81,7 @@ img_keypoints_500 = cv2.drawKeypoints(
 
 # 3. nfeatures=200 결과를 이미지에 그리기
 img_keypoints_200 = cv2.drawKeypoints(
-    img_gray,  # 입력 그레이스케일 이미지
+    img_path,  # 입력 컬러 이미지
     keypoints_200,  # 특징점 리스트 (200개 제한)
     None,  # 출력 이미지
     flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS  # 특징점 시각화 옵션
@@ -180,7 +181,7 @@ print(f"  nfeatures=200: {len(keypoints_200)} 개 (원래 대비 {len(keypoints_
 ```python
 sift = cv2.SIFT_create()
 keypoints, descriptors = sift.detectAndCompute(img_gray, None)
-img_keypoints = cv2.drawKeypoints(img_gray, keypoints, None, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+img_keypoints = cv2.drawKeypoints(img_path, keypoints, None, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 ```
 
 ## 결과물

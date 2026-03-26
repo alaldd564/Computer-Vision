@@ -44,7 +44,7 @@ print(f"nfeatures=200 - 특징점 개수: {len(keypoints_200)}")
 
 # 1. 기본 SIFT 결과를 이미지에 그리기
 img_keypoints_default = cv2.drawKeypoints(
-    img_gray,  # 그리기를 할 입력 그레이스케일 이미지
+    img_path,  # 그리기를 할 입력 컬러 이미지
     keypoints_default,  # 그릴 특징점 리스트
     None,  # 출력 이미지 (None으로 설정하면 새로 생성)
     flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS  # 특징점의 방향과 크기를 표시하는 플래그
@@ -52,7 +52,7 @@ img_keypoints_default = cv2.drawKeypoints(
 
 # 2. nfeatures=500 결과를 이미지에 그리기
 img_keypoints_500 = cv2.drawKeypoints(
-    img_gray,  # 입력 그레이스케일 이미지
+    img_path,  # 입력 컬러 이미지
     keypoints_500,  # 특징점 리스트 (500개 제한)
     None,  # 출력 이미지
     flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS  # 특징점 시각화 옵션
@@ -60,7 +60,7 @@ img_keypoints_500 = cv2.drawKeypoints(
 
 # 3. nfeatures=200 결과를 이미지에 그리기
 img_keypoints_200 = cv2.drawKeypoints(
-    img_gray,  # 입력 그레이스케일 이미지
+    img_path,  # 입력 컬러 이미지
     keypoints_200,  # 특징점 리스트 (200개 제한)
     None,  # 출력 이미지
     flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS  # 특징점 시각화 옵션
