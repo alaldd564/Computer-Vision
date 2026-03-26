@@ -337,6 +337,7 @@ for i, m in enumerate(good_matches[:5]):
     # 각 매칭의 인덱스, 두 이미지의 특징점 위치, 거리 출력
     print(f"{i+1}. 이미지1: {gkp1[m.queryIdx].pt}, 이미지2: {gkp2[m.trainIdx].pt}, 거리: {m.distance:.2f}")
 ```
+</details>
 
 **핵심 코드**
 ```python
@@ -473,7 +474,8 @@ plt.tight_layout()  # 여백 자동 조정
 plt.savefig('chapter04/03_sift_homography_alignment.png', dpi=150, bbox_inches='tight')  # 파일 저장
 plt.show()  # 화면에 출력
 ```
-
+</details>
+	
 **핵심 코드**
 ```python
 sift = cv2.SIFT_create()
