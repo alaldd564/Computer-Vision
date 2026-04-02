@@ -285,6 +285,7 @@ matches_bf = bf.match(des1, des2)
 <summary><b>전체 코드 (주석 포함)</b></summary>
 
 ```python
+
 # OpenCV 라이브러리 import
 import cv2
 # numpy 라이브러리 import (행렬, 배열 연산)
@@ -348,17 +349,43 @@ dst_pts = np.float32([kp2[m.trainIdx].pt for m in good_matches]).reshape(-1, 1, 
 H, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)  # 변환 행렬 계산
 print('호모그래피 행렬:\n', H)  # 행렬 출력
 
-# img1을 호모그래피로 변환하여 파노라마 크기로 워핑
+# img1을 img2 좌표계로 워핑한 뒤, 두 이미지 코너를 기준으로 동적 파노라마 캔버스 계산
 h1, w1 = img1.shape[:2]  # img1 크기
 h2, w2 = img2.shape[:2]  # img2 크기
-panorama_width = w1 + w2  # 파노라마 너비
-panorama_height = max(h1, h2)  # 파노라마 높이
 
-warped_img1 = cv2.warpPerspective(img1, H, (panorama_width, panorama_height))  # img1 변환
+corners_img1 = np.float32([[0, 0], [w1, 0], [w1, h1], [0, h1]]).reshape(-1, 1, 2)
+corners_img2 = np.float32([[0, 0], [w2, 0], [w2, h2], [0, h2]]).reshape(-1, 1, 2)
 
-# 파노라마 이미지에 img2를 왼쪽에 붙이기 (겹치는 부분 덮어쓰기)
-overlay = warped_img1.copy()  # 변환 이미지 복사
-overlay[0:h2, 0:w2] = img2  # 왼쪽에 img2 삽입
+warped_corners_img1 = cv2.perspectiveTransform(corners_img1, H)
+all_corners = np.concatenate((warped_corners_img1, corners_img2), axis=0)
+
+[xmin, ymin] = np.int32(all_corners.min(axis=0).ravel() - 0.5)
+[xmax, ymax] = np.int32(all_corners.max(axis=0).ravel() + 0.5)
+
+# 결과 좌표가 음수로 내려갈 수 있으므로 평행이동 행렬을 적용
+translation = [-xmin, -ymin]
+T = np.array(
+    [[1, 0, translation[0]], [0, 1, translation[1]], [0, 0, 1]],
+    dtype=np.float64,
+)
+
+panorama_width = xmax - xmin
+panorama_height = ymax - ymin
+
+warped_img1 = cv2.warpPerspective(img1, T @ H, (panorama_width, panorama_height))
+
+# 변환된 캔버스 위에 img2를 같은 좌표계로 배치
+overlay = warped_img1.copy()
+x_offset, y_offset = translation
+overlay[y_offset:y_offset + h2, x_offset:x_offset + w2] = img2
+
+# 완전한 검은색(빈) 영역을 제거해 결과를 타이트하게 정리
+gray_overlay = cv2.cvtColor(overlay, cv2.COLOR_BGR2GRAY)
+_, thresh = cv2.threshold(gray_overlay, 1, 255, cv2.THRESH_BINARY)
+coords = cv2.findNonZero(thresh)
+if coords is not None:
+    x, y, w, h = cv2.boundingRect(coords)
+    overlay = overlay[y:y + h, x:x + w]
 
 # 특징점 매칭 결과 시각화 (inlier만 표시)
 matches_mask = mask.ravel().tolist()  # inlier/outlier 마스크
@@ -383,6 +410,12 @@ axes[1].axis('off')  # 축 숨김
 plt.tight_layout()  # 여백 자동 조정
 plt.savefig('chapter04/03_sift_homography_alignment.png', dpi=150, bbox_inches='tight')  # 파일 저장
 plt.show()  # 화면에 출력
+
+# 좋은 매칭점 일부(상위 5개) 정보 출력
+print("\n===== 좋은 매칭점 (상위 5개) =====")
+for i, m in enumerate(good_matches[:5]):  # 상위 5개만
+    print(f"{i+1}. img1: {kp1[m.queryIdx].pt}, img2: {kp2[m.trainIdx].pt}, 거리: {m.distance:.2f}")  # 좌표 및 거리 출력
+
 ```
 </details>
 	
@@ -393,8 +426,14 @@ kp1, des1 = sift.detectAndCompute(img1_gray, None)
 kp2, des2 = sift.detectAndCompute(img2_gray, None)
 bf = cv2.BFMatcher()
 matches = bf.knnMatch(des1, des2, k=2)
+# Lowe's ratio test로 좋은 매칭만 선별
+good_matches = [m for m, n in matches if m.distance < 0.7 * n.distance]
+src_pts = np.float32([kp1[m.queryIdx].pt for m in good_matches]).reshape(-1, 1, 2)
+dst_pts = np.float32([kp2[m.trainIdx].pt for m in good_matches]).reshape(-1, 1, 2)
 H, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
-warped_img1 = cv2.warpPerspective(img1, H, (panorama_width, panorama_height))
+# 두 이미지 코너를 모두 변환해 파노라마 캔버스 계산
+# 변환된 img1과 img2를 overlay, 빈 영역 제거
+# 결과 시각화 및 저장
 ```
 
 ## 결과물
