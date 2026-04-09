@@ -1,0 +1,6 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Large model files (keep local)
+chapter06/yolov3.weights
